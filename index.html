@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Masterclass</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. Definisi Variabel CSS (Yang dipanggil oleh HTML aslimu) */
+        :root {
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --color-background-primary: #ffffff;
+            --color-background-secondary: #f8fafc; /* Slate 50 */
+            --color-border-secondary: #cbd5e1;     /* Slate 300 */
+            --color-border-tertiary: #e2e8f0;      /* Slate 200 */
+            --color-text-primary: #0f172a;         /* Slate 900 */
+            --color-text-secondary: #64748b;       /* Slate 500 */
+            --border-radius-md: 12px;
+            --border-radius-lg: 20px;
+            
+            /* Warna Latar Belakang Luar Aplikasi */
+            --app-bg: #f1f5f9;
+        }
+
+        /* 2. Reset Body & App Container */
+        body {
+            background-color: var(--app-bg);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 3. Menimpa Class `.w` Aslimu agar menjadi Card Aplikasi Melayang */
+        .w {
+            background: var(--color-background-primary);
+            max-width: 680px !important;
+            width: 100%;
+            padding: 24px !important;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.6);
+            position: relative;
+        }
+
+        /* 4. Tab Navigation Super Mulus */
+        .tabs {
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        
+        .tab {
+            font-weight: 600 !important;
+            padding: 8px 16px !important;
+            white-space: nowrap;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        .tab:hover:not(.on) {
+            background: var(--color-background-secondary) !important;
+            color: var(--color-text-primary) !important;
+            transform: translateY(-1px);
+        }
+        .tab.on {
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* 5. Animasi Pane (Anti-Lag, hanya pake opacity & transform) */
+        .pane {
+            animation: slideFadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(8px);
+            will-change: transform, opacity;
+        }
+        @keyframes slideFadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 6. Hover Effects untuk Card (Bikin UI terasa "hidup") */
+        .card, .ind-card, .col-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .card:hover, .ind-card:hover, .col-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+            border-color: var(--color-border-secondary) !important;
+        }
+
+        /* 7. Mempercantik Callout Box & Tabel */
+        .info, .warn, .danger, .good {
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            border-radius: 8px !important;
+        }
+        .tbl {
+            white-space: nowrap;
+        }
+        .tbl th {
+            background: var(--color-background-secondary);
+        }
+        .tbl tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* 8. Styling Tombol Prompt di paling bawah */
+        button[onclick^="sendPrompt"] {
+            background: linear-gradient(135deg, #185FA5 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+            transition: all 0.2s ease;
+            font-family: var(--font-sans);
+        }
+        button[onclick^="sendPrompt"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+        }
+        button[onclick^="sendPrompt"]:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        /* 9. Responsif Ekstra untuk Layar HP */
+        @media (max-width: 600px) {
+            body { padding: 0; background: var(--color-background-primary); }
+            .w { border-radius: 0; padding: 20px 16px !important; min-height: 100vh; box-shadow: none; border: none; }
+            .three-col { grid-template-columns: 1fr !important; }
+            .indicator-grid { grid-template-columns: 1fr 1fr !important; }
+            .row { flex-direction: column; gap: 4px !important; align-items: flex-start !important; padding: 10px 0 !important;}
+            .rv { text-align: left !important; }
+        }
+    </style>
+
+    <style>
+*{box-sizing:border-box;margin:0;padding:0}
+.w{padding:1.5rem 0;font-family:var(--font-sans)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.tab{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans)}
+.tab.on{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.pane{display:none}.pane.on{display:block}
+.sec{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px;margin-top:0}
+.div{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.25rem 0}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin-bottom:1rem}
+.mcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.mlabel{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.mval{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;gap:12px}
+.row:last-child{border-bottom:none}
+.rl{color:var(--color-text-secondary);flex-shrink:0}
+.rv{font-weight:500;color:var(--color-text-primary);text-align:right}
+.info{background:#E6F1FB;border-left:3px solid #378ADD;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#0C447C;line-height:1.55}
+.warn{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#633806;line-height:1.55}
+.danger{background:#FCEBEB;border-left:3px solid #E24B4A;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#791F1F;line-height:1.55}
+.good{background:#EAF3DE;border-left:3px solid #639922;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#27500A;line-height:1.55}
+.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.snum{min-width:26px;height:26px;border-radius:50%;background:var(--color-text-primary);color:var(--color-background-primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:1px}
+.sbody{flex:1}
+.stitle{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.sdesc{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
+.chip{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin:2px 2px 2px 0}
+.cg{background:#EAF3DE;color:#27500A}
+.ca{background:#FAEEDA;color:#633806}
+.cr{background:#FCEBEB;color:#791F1F}
+.cb{background:#E6F1FB;color:#0C447C}
+.cp{background:#EEEDFE;color:#3C3489}
+.indicator-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.ind-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.ind-name{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.ind-use{font-size:11px;color:var(--color-text-secondary);line-height:1.4}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.col-card{border-radius:var(--border-radius-lg);padding:14px;border:0.5px solid var(--color-border-tertiary)}
+.col-head{font-size:13px;font-weight:500;margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.col-item{font-size:12px;color:var(--color-text-secondary);padding:3px 0;line-height:1.4}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);border-bottom:1px solid var(--color-border-tertiary);padding:5px 8px;font-weight:500}
+.tbl td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:top;line-height:1.4}
+.tbl tr:last-child td{border-bottom:none}
+.g{color:#3B6D11}.r{color:#A32D2D}.a{color:#854F0B}.b{color:#185FA5}
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">Masterclass trading lengkap: cara analisis dan eksekusi untuk scalping, swing trading, dan investasi jangka panjang di saham IDX.</h2>
+
+<div class="w">
+  <div class="tabs">
+    <button class="tab on" onclick="go('overview',this)">Perbandingan</button>
+    <button class="tab" onclick="go('scalping',this)">Scalping</button>
+    <button class="tab" onclick="go('swing',this)">Swing</button>
+    <button class="tab" onclick="go('invest',this)">Investasi</button>
+    <button class="tab" onclick="go('indikator',this)">Indikator</button>
+    <button class="tab" onclick="go('psikologi',this)">Psikologi</button>
+    <button class="tab" onclick="go('esip',this)">ESIP check</button>
+  </div>
+
+  <div id="pane-overview" class="pane on">
+    <p class="sec">Tiga mode trading — pilih sesuai gaya hidupmu</p>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>Aspek</th><th>Scalping</th><th>Swing</th><th>Investasi</th></tr></thead>
+        <tbody>
+          <tr><td>Hold time</td><td>Menit–jam</td><td>2–14 hari</td><td>Bulan–tahun</td></tr>
+          <tr><td>Target profit</td><td>0.5–2% per trade</td><td>5–20% per posisi</td><td>50–200%+</td></tr>
+          <tr><td>Frekuensi trade</td><td>5–20x per hari</td><td>3–10x per bulan</td><td>1–5x per tahun</td></tr>
+          <tr><td>TF utama</td><td>1m, 5m, 15m</td><td>Daily, H4, H1</td><td>Monthly, Weekly</td></tr>
+          <tr><td>TF konfirmasi</td><td>H1 (bias)</td><td>Weekly (bias)</td><td>Fundamental</td></tr>
+          <tr><td>Analisis utama</td><td>Teknikal murni</td><td>Teknikal + sentimen</td><td>Fundamental + teknikal</td></tr>
+          <tr><td>Modal minimum</td><td>Kecil OK</td><td>Sedang</td><td>Lebih besar lebih baik</td></tr>
+          <tr><td>Stres level</td><td class="r">Tinggi sekali</td><td class="a">Sedang</td><td class="g">Rendah</td></tr>
+          <tr><td>Skill level</td><td class="r">Butuh jam terbang banyak</td><td class="a">Intermediate</td><td class="g">Bisa dipelajari cepat</td></tr>
+          <tr><td>Waktu di depan layar</td><td class="r">Full time</td><td class="a">1–2 jam/hari</td><td class="g">30 menit/minggu</td></tr>
+          <tr><td>SL karakteristik</td><td>Ketat, 0.5–1%</td><td>Medium, 3–7%</td><td>Lebar atau tidak pakai</td></tr>
+          <tr><td>Cocok untuk ESIP?</td><td class="r">Tidak ideal</td><td class="g">Ya, tapi tunggu setup</td><td class="a">Mahal di harga sekarang</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="warn" style="margin-top:12px">
+      <span style="font-weight:500">Pilih mode yang sesuai karakter kamu, bukan yang kelihatan paling cepat cuan.</span> Trader yang mencoba scalping tanpa jam terbang biasanya kalah lebih cepat dari trader swing pemula. Mulai dari swing kalau kamu baru belajar.
+    </div>
+  </div>
+
+  <div id="pane-scalping" class="pane">
+    <p class="sec">Framework analisis scalping — step by step</p>
+
+    <div class="info">
+      Scalping di saham IDX itu berbeda dari scalping forex. Spread bisa lebar, jam trading terbatas (09:00–15:49), dan saham tidak bergerak 24 jam. Kamu butuh saham yang likuid banget dan volatile secukupnya.
+    </div>
+
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <p class="stitle">Baca bias harian dari H1 / Daily dulu (5 menit)</p>
+        <p class="sdesc">Sebelum buka chart 5m, baca Daily dan H1 dulu. Tentukan: hari ini cenderung naik atau turun? Kalau Daily bearish, fokus short setup saja — jangan coba scalping naik melawan tren. Kalau Daily bullish, cari setup long di pullback.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <p class="stitle">Syarat saham yang cocok untuk scalping</p>
+        <p class="sdesc">Tidak semua saham cocok. Syarat minimum:</p>
+        <div style="margin-top:6px">
+          <span class="chip cg">Volume &gt; 50 juta lot/hari</span>
+          <span class="chip cg">Frekuensi &gt; 5.000/hari</span>
+          <span class="chip cg">Spread tipis (1–2 tick)</span>
+          <span class="chip cg">Harga 200–2.000</span>
+          <span class="chip cr">Hindari saham gorengan</span>
+          <span class="chip cr">Hindari spread lebar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <p class="stitle">Setup entry scalping — 3 sinyal harus ketemu</p>
+        <p class="sdesc">Jangan entry kalau tidak ada minimal 3 konfirmasi ini sekaligus:</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="rl">Konfirmasi 1 — Harga di support</span><span class="rv">Harga menyentuh support kuat di 5m atau 15m</span></div>
+      <div class="row"><span class="rl">Konfirmasi 2 — Candle reversal</span><span class="rv">Hammer, bullish engulfing, atau pin bar di support</span></div>
+      <div class="row"><span class="rl">Konfirmasi 3 — Volume spike</span><span class="rv">Volume candle reversal lebih besar dari 3 candle sebelumnya</span></div>
+      <div class="row"><span class="rl">Konfirmasi 4 (bonus)</span><span class="rv">RSI 5m menyentuh 30–35 lalu mulai naik</span></div>
+      <div class="row"><span class="rl">Konfirmasi 5 (bonus)</span><span class="rv">MACD 5m golden cross atau histogram berubah positif</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="sbody">
+        <p class="stitle">Manajemen posisi scalping</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="rl">Target profit</span><span class="rv g">0.5–2% per trade (ambil cepat)</span></div>
+      <div class="row"><span class="rl">Stop loss</span><span class="rv r">Ketat: 0.5–1% dari entry</span></div>
+      <div class="row"><span class="rl">Max trade per hari</span><span class="rv">5 trade — lebih dari itu = overtrade</span></div>
+      <div class="row"><span class="rl">Aturan daily loss limit</span><span class="rv r">Kalau sudah -2% hari itu, berhenti total</span></div>
+      <div class="row"><span class="rl">Waktu terbaik</span><span class="rv">09:30–11:00 dan 13:30–15:00</span></div>
+      <div class="row"><span class="rl">Waktu paling berbahaya</span><span class="rv r">09:00–09:15 (terlalu volatile) dan 15:00–15:49 (tutup)</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">5</div>
+      <div class="sbody">
+        <p class="stitle">Pola scalping yang paling sering jalan di IDX</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="rl">Pola 1 — Opening gap up lalu pullback</span><span class="rv">Beli saat pullback ke MA5 atau VWAP setelah gap up pagi</span></div>
+      <div class="row"><span class="rl">Pola 2 — Breakout intraday</span><span class="rv">Beli saat harga tembus high kemarin dengan volume besar</span></div>
+      <div class="row"><span class="rl">Pola 3 — Bouncing dari VWAP</span><span class="rv">Harga turun ke VWAP lalu mantul — entry di candle konfirmasi</span></div>
+      <div class="row"><span class="rl">Pola 4 — Trendline bounce</span><span class="rv">Harga menyentuh trendline naik lalu muncul candle bullish</span></div>
+    </div>
+
+    <div class="danger">
+      <span style="font-weight:500">ESIP tidak cocok untuk scalping.</span> Volume sudah OK tapi spread-nya masih cukup lebar untuk saham di harga 133. Plus, hari ini Daily sedang koreksi dalam. Scalping di kondisi ini = gambling, bukan trading.
+    </div>
+  </div>
+
+  <div id="pane-swing" class="pane">
+    <p class="sec">Framework analisis swing — step by step</p>
+
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <p class="stitle">Baca Weekly dulu — tentukan bias utama</p>
+        <p class="sdesc">Ini non-negotiable. Sebelum lihat apapun, buka chart Weekly. Tentukan: saham sedang uptrend, downtrend, atau sideways? Kalau Weekly bearish, tidak ada swing long — titik.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <p class="stitle">Cari fase yang tepat di Daily</p>
+        <p class="sdesc">Swing paling bagus masuk saat fase pullback dalam uptrend, bukan saat sudah naik tinggi. Identifikasi 4 fase ini di Daily:</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="rl">Fase 1 — Akumulasi</span><span class="rv cb">Harga sideways, volume mulai naik pelan. Ini waktu terbaik beli.</span></div>
+      <div class="row"><span class="rl">Fase 2 — Markup (uptrend)</span><span class="rv g">Harga naik konsisten di atas MA. Beli di pullback ke MA20.</span></div>
+      <div class="row"><span class="rl">Fase 3 — Distribusi</span><span class="rv a">Harga sideways di atas, volume tinggi tapi harga tidak naik. Jangan beli.</span></div>
+      <div class="row"><span class="rl">Fase 4 — Markdown (downtrend)</span><span class="rv r">Harga turun konsisten. Jangan beli. Tunggu akumulasi berikutnya.</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <p class="stitle">Cari area entry dengan RRR minimal 1:2</p>
+        <p class="sdesc">Entry di dekat support — bukan di tengah atau dekat resistance. Kalau entry di dekat resistance, RRR-nya pasti jelek.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="sbody">
+        <p class="stitle">Konfirmasi entry dengan H1 atau H4</p>
+        <p class="sdesc">Setelah area entry ketemu di Daily, masuk ke H1/H4 untuk cari timing yang lebih presisi. Tunggu candle konfirmasi bullish di H1 sebelum eksekusi.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="snum">5</div>
+      <div class="sbody">
+        <p class="stitle">Tentukan SL, TP, dan RRR sebelum klik beli</p>
+        <p class="sdesc">Ini hukum wajib. Kalau belum tahu SL dan TP-nya, belum boleh beli. Pasang SL di bawah support terakhir. TP minimal di resistance terdekat.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="rl">Checklist wajib sebelum entry swing</span><span class="rv"></span></div>
+      <div class="row"><span class="rl">Weekly masih bullish?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">Daily di fase 1 atau 2?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">Harga dekat support, bukan resistance?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">RSI Daily di bawah 65?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">Volume konfirmasi ada?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">RRR minimal 1:2?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">SL sudah ditentukan sebelum beli?</span><span class="rv">Harus ya</span></div>
+      <div class="row"><span class="rl">IHSG tidak sedang downtrend?</span><span class="rv">Harus ya</span></div>
+    </div>
+
+    <div class="good">
+      <span style="font-weight:500">ESIP cocok untuk swing</span> — tapi tunggu pullback ke 121–125 dulu. Jangan kejar di harga sekarang (133). Setup swing yang bagus itu beli di saat orang lain takut, bukan saat semua orang sudah naik.
+    </div>
+  </div>
+
+  <div id="pane-invest" class="pane">
+    <p class="sec">Framework analisis investasi jangka panjang</p>
+
+    <div class="info">
+      Investasi berbeda fundamental dari trading. Kamu tidak mencari "kapan naik minggu ini" — kamu mencari "5 tahun lagi perusahaan ini lebih besar atau tidak?" Analisis fundamentalnya yang utama, teknikal hanya untuk timing beli yang lebih bagus.
+    </div>
+
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <p class="stitle">Analisis bisnis — apakah bisnisnya bagus?</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="rl">Model bisnis</span><span class="rv">Apakah bisnisnya mudah dipahami? Ada competitive moat?</span></div>
+      <div class="row"><span class="rl">Pertumbuhan revenue</span><span class="rv g">Harus tumbuh minimal 10–15% per tahun</span></div>
+      <div class="row"><span class="rl">Pertumbuhan laba bersih</span><span class="rv g">Harus tumbuh, konsisten, tidak naik turun liar</span></div>
+      <div class="row"><span class="rl">Margin profitabilitas</span><span class="rv">NPM &gt; 10% = bagus. NPM &lt; 5% = tipis, waspada</span></div>
+      <div class="row"><span class="rl">ROE (Return on Equity)</span><span class="rv g">ROE &gt; 15% = bagus, artinya modal dipakai efisien</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <p class="stitle">Analisis kesehatan keuangan</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="rl">Debt to Equity Ratio (DER)</span><span class="rv">DER &lt; 1 = aman. DER &gt; 2 = berisiko tinggi</span></div>
+      <div class="row"><span class="rl">Current Ratio</span><span class="rv g">CR &gt; 1.5 = likuiditas sehat</span></div>
+      <div class="row"><span class="rl">Free Cash Flow</span><span class="rv g">Harus positif dan tumbuh — ini uang yang benar-benar ada</span></div>
+      <div class="row"><span class="rl">Arus kas operasi vs laba</span><span class="rv">Harus sejalan — kalau laba tinggi tapi arus kas negatif = warning</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <p class="stitle">Analisis valuasi — apakah harganya wajar?</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="rl">PER (Price to Earnings)</span><span class="rv">Bandingkan dengan rata-rata industri dan historisnya. PER tinggi = mahal.</span></div>
+      <div class="row"><span class="rl">PBV (Price to Book Value)</span><span class="rv">PBV &lt; 1 = harga di bawah nilai buku = murah secara aset</span></div>
+      <div class="row"><span class="rl">PEG Ratio</span><span class="rv g">PEG &lt; 1 = murah relatif terhadap pertumbuhannya</span></div>
+      <div class="row"><span class="rl">EV/EBITDA</span><span class="rv">Makin rendah makin murah. Bandingkan dengan peers.</span></div>
+      <div class="row"><span class="rl">Dividend Yield</span><span class="rv">Bonus kalau ada dividen stabil — tanda perusahaan sehat</span></div>
+    </div>
+
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="sbody">
+        <p class="stitle">Timing beli dengan teknikal (opsional tapi membantu)</p>
+        <p class="sdesc">Setelah fundamental bagus dan valuasi menarik, gunakan teknikal untuk cari harga entry yang lebih baik. Beli saat Monthly atau Weekly pullback ke support kuat, RSI Weekly di bawah 50, dan harga dekat MA200 Monthly.</p>
+      </div>
+    </div>
+
+    <div class="danger">
+      <span style="font-weight:500">ESIP tidak cocok untuk investasi di harga sekarang.</span> Revenue stagnan, laba tipis, PER 73x jauh di atas industri 7x, market cap micro. Kenaikan harganya didorong sentimen ekspansi — bukan kinerja keuangan yang solid. Untuk investasi, cari saham dengan PER wajar, revenue tumbuh, dan market cap lebih besar.
+    </div>
+  </div>
+
+  <div id="pane-indikator" class="pane">
+    <p class="sec">Indikator teknikal — fungsi dan cara pakainya</p>
+
+    <div class="div" style="margin-top:0"></div>
+    <p class="sec">Kelompok 1 — Trend (ke mana arahnya?)</p>
+    <div class="indicator-grid">
+      <div class="ind-card">
+        <p class="ind-name">MA / EMA</p>
+        <p class="ind-use">Tentukan tren. Harga di atas MA = bullish. MA20 &gt; MA50 = uptrend sehat.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">SuperTrend</p>
+        <p class="ind-use">Garis merah/hijau. Hijau = beli, merah = jual. Bagus untuk konfirmasi tren di Weekly.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">Bollinger Band</p>
+        <p class="ind-use">Harga menyentuh lower band + squeeze = potensi breakout. Harga di upper band = overbought area.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">Ichimoku</p>
+        <p class="ind-use">Harga di atas cloud = bullish kuat. Di bawah cloud = bearish. Untuk swing dan investasi.</p>
+      </div>
+    </div>
+
+    <p class="sec">Kelompok 2 — Momentum (seberapa kuat gerakannya?)</p>
+    <div class="indicator-grid">
+      <div class="ind-card">
+        <p class="ind-name">RSI (14)</p>
+        <p class="ind-use">Di atas 70 = overbought (hati-hati). Di bawah 30 = oversold (potensi beli). 50 = netral.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">MACD</p>
+        <p class="ind-use">Golden cross MACD = sinyal beli. Dead cross = sinyal jual. Histogram positif = momentum naik.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">Stochastic</p>
+        <p class="ind-use">Mirip RSI tapi lebih sensitif. Cocok untuk scalping dan swing pendek. Golden cross di bawah 20 = beli.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">CCI</p>
+        <p class="ind-use">Di atas +100 = overbought. Di bawah -100 = oversold. Bagus untuk konfirmasi divergence.</p>
+      </div>
+    </div>
+
+    <p class="sec">Kelompok 3 — Volume (siapa yang bergerak?)</p>
+    <div class="indicator-grid">
+      <div class="ind-card">
+        <p class="ind-name">Volume Bar</p>
+        <p class="ind-use">Volume naik saat harga naik = sehat. Volume naik saat harga turun = distribusi / selling pressure.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">OBV</p>
+        <p class="ind-use">On Balance Volume. Naik = akumulasi. Turun = distribusi. Bisa deteksi dini sebelum harga bergerak.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">VWAP</p>
+        <p class="ind-use">Harga rata-rata berbobot volume. Harga di atas VWAP = bullish hari ini. Penting untuk scalping.</p>
+      </div>
+      <div class="ind-card">
+        <p class="ind-name">MFI</p>
+        <p class="ind-use">Money Flow Index. Menggabungkan harga dan volume. Di atas 80 = overbought, di bawah 20 = oversold.</p>
+      </div>
+    </div>
+
+    <div class="div"></div>
+    <p class="sec">Kombinasi indikator yang terbukti efektif</p>
+    <div class="card">
+      <div class="row"><span class="rl">Setup scalping</span><span class="rv">EMA5 + EMA20 + VWAP + Stochastic + Volume</span></div>
+      <div class="row"><span class="rl">Setup swing</span><span class="rv">MA20 + MA50 + RSI14 + MACD + Volume Avg</span></div>
+      <div class="row"><span class="rl">Setup investasi (timing)</span><span class="rv">MA200 Monthly + RSI Monthly + OBV Monthly</span></div>
+      <div class="row"><span class="rl">Konfirmasi breakout</span><span class="rv">Volume &gt; 2x rata-rata + candle close di atas resistance + RSI &gt; 50</span></div>
+      <div class="row"><span class="rl">Konfirmasi reversal</span><span class="rv">RSI divergence + candle reversal + volume spike</span></div>
+    </div>
+
+    <div class="warn">
+      <span style="font-weight:500">Jangan pakai lebih dari 4–5 indikator sekaligus.</span> Makin banyak indikator = makin banyak sinyal yang saling bertentangan = makin bingung = makin sering salah keputusan. Pilih satu dari setiap kelompok dan kuasai betul.
+    </div>
+  </div>
+
+  <div id="pane-psikologi" class="pane">
+    <p class="sec">Psikologi trading — ini yang bikin 90% trader kalah</p>
+
+    <div class="card">
+      <p class="stitle" style="margin-bottom:8px">Kesalahan psikologi paling umum</p>
+      <div class="row"><span class="rl">FOMO (Fear of Missing Out)</span><span class="rv r">Beli karena takut ketinggalan, bukan karena setup valid</span></div>
+      <div class="row"><span class="rl">Revenge trading</span><span class="rv r">Loss → langsung buka trade lagi untuk balik — hasilnya dobel loss</span></div>
+      <div class="row"><span class="rl">Terlalu cepat TP</span><span class="rv r">Ambil profit saat harga baru naik 1–2%, padahal target 10%</span></div>
+      <div class="row"><span class="rl">Tahan loss terlalu lama</span><span class="rv r">Tidak mau cut loss karena "yakin balik" — malah makin dalam</span></div>
+      <div class="row"><span class="rl">Overconfidence setelah win streak</span><span class="rv r">Merasa jagoan setelah 5 win berturut — buka posisi lebih besar, hasilnya blowout</span></div>
+      <div class="row"><span class="rl">Averaging down tanpa plan</span><span class="rv r">Beli lagi saat turun tanpa rencana dari awal — posisi makin besar, loss makin dalam</span></div>
+      <div class="row"><span class="rl">Nikah sama saham</span><span class="rv r">Terlalu yakin dengan satu saham sampai tidak mau cut loss meski semua sinyal negatif</span></div>
+    </div>
+
+    <div class="div"></div>
+    <p class="sec">Framework pikiran yang benar</p>
+
+    <div class="good">
+      <span style="font-weight:500">Trading itu probabilitas, bukan kepastian.</span> Bahkan setup terbaik bisa loss. Yang penting adalah: kamu menang lebih besar dari kalahmu (RRR), dan kamu menang lebih sering dari kalahmu (win rate). Kalau dua itu terjaga, akun kamu pasti tumbuh.
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="rl">Mindset yang benar soal loss</span><span class="rv">Loss adalah biaya berbisnis, bukan kegagalan pribadi</span></div>
+      <div class="row"><span class="rl">Mindset yang benar soal win</span><span class="rv">Win bukan bukti kamu hebat — bisa jadi keberuntungan. Tetap humble.</span></div>
+      <div class="row"><span class="rl">Cara kelola emosi saat loss</span><span class="rv">Berhenti trading hari itu. Jalan keluar. Review besok dengan kepala dingin.</span></div>
+      <div class="row"><span class="rl">Cara kelola emosi saat win</span><span class="rv">Catat apa yang benar. Jangan langsung buka trade lagi karena euforia.</span></div>
+      <div class="row"><span class="rl">Aturan "tidak ada trade hari ini"</span><span class="rv">Kalau market tidak kasih setup yang jelas, tidak trade adalah keputusan terbaik</span></div>
+    </div>
+
+    <div class="div"></div>
+    <p class="sec">Aturan manajemen risiko yang harus dikuasai</p>
+    <div class="card">
+      <div class="row"><span class="rl">Risiko per trade</span><span class="rv">Max 1–2% dari total modal per trade</span></div>
+      <div class="row"><span class="rl">Daily loss limit</span><span class="rv r">Kalau sudah -3% hari itu, stop trading sampai besok</span></div>
+      <div class="row"><span class="rl">Max open position bersamaan</span><span class="rv">Scalping: 1–2. Swing: 3–5. Investasi: 5–15 saham</span></div>
+      <div class="row"><span class="rl">Rumus ukuran posisi</span><span class="rv">Lot = (Modal × % Risiko) / (Entry − SL)</span></div>
+      <div class="row"><span class="rl">RRR minimum</span><span class="rv g">Scalping: 1:1.5. Swing: 1:2. Investasi: bebas tapi SL longgar</span></div>
+    </div>
+  </div>
+
+  <div id="pane-esip" class="pane">
+    <p class="sec">ESIP — cocok untuk mode apa?</p>
+
+    <div class="three-col">
+      <div class="col-card" style="border-color:#F09595">
+        <p class="col-head r">Scalping — Tidak</p>
+        <p class="col-item">Spread masih lebar relatif terhadap targetnya</p>
+        <p class="col-item">Daily sedang koreksi dalam</p>
+        <p class="col-item">Volatilitas tidak terprediksi</p>
+        <p class="col-item">Micro cap — rentan bandar</p>
+      </div>
+      <div class="col-card" style="border-color:#97C459">
+        <p class="col-head g">Swing — Ya, tapi tunggu</p>
+        <p class="col-item">Weekly masih bullish kuat</p>
+        <p class="col-item">Tunggu pullback ke 121–125</p>
+        <p class="col-item">Konfirmasi candle reversal di Daily</p>
+        <p class="col-item">Volume harus kuat saat reversal</p>
+        <p class="col-item">RRR dari 121 → 152 sangat menarik</p>
+      </div>
+      <div class="col-card" style="border-color:#EF9F27">
+        <p class="col-head a">Investasi — Tidak ideal</p>
+        <p class="col-item">PER 73x vs industri 7x = mahal</p>
+        <p class="col-item">Revenue 2025 turun dari 2024</p>
+        <p class="col-item">Laba bersih masih sangat kecil</p>
+        <p class="col-item">Micro cap = risiko tinggi</p>
+        <p class="col-item">Naik karena sentimen, bukan fundamental</p>
+      </div>
+    </div>
+
+    <div class="div"></div>
+    <p class="sec">Rencana trading ESIP yang realistis</p>
+    <div class="card">
+      <div class="row"><span class="rl">Mode yang cocok</span><span class="rv g">Swing pendek 5–10 hari</span></div>
+      <div class="row"><span class="rl">Kondisi entry</span><span class="rv">Tunggu pullback ke 121–125 + candle reversal Daily + volume naik</span></div>
+      <div class="row"><span class="rl">Entry ideal</span><span class="rv">122–125</span></div>
+      <div class="row"><span class="rl">Stop Loss</span><span class="rv r">Di bawah 113</span></div>
+      <div class="row"><span class="rl">Take Profit 1</span><span class="rv g">152 (amankan sebagian)</span></div>
+      <div class="row"><span class="rl">Take Profit 2</span><span class="rv g">181 (geser SL ke breakeven)</span></div>
+      <div class="row"><span class="rl">RRR ke TP1</span><span class="rv g">1:3.3 — sangat layak</span></div>
+      <div class="row"><span class="rl">Kalau 121 tembus</span><span class="rv r">Lupakan dulu. Tunggu di support 102.</span></div>
+    </div>
+
+    <button style="margin-top:10px;width:100%" onclick="sendPrompt('Kapan saya harus mulai pantau ESIP lagi dan apa sinyal yang harus saya cari sebelum entry swing?')">
+      Kapan mulai pantau ESIP dan sinyal apa yang dicari? ↗
+    </button>
+  </div>
+</div>
+
+<script>
+function go(id,btn){
+  // Hapus state "on" dari semua pane dan tab
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  
+  // Trik supaya animasi restart mulus: beri sedikit jeda sebelum menambahkan class .on
+  setTimeout(() => {
+    document.getElementById('pane-'+id).classList.add('on');
+  }, 10);
+  
+  btn.classList.add('on');
+}
+</script>
+<script>
+    function sendPrompt(msg) {
+        alert("Pesan Prompt Disalin:\n\n" + msg + "\n\n(Kamu bisa mem-paste pesan ini ke AI)");
+        console.log("Prompt Log: ", msg);
+    }
+</script>
+
+</body>
+</html>
