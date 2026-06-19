@@ -3,198 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Masterclass</title>
+    <title>Masterclass Trading Pro</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. Definisi Variabel CSS (Yang dipanggil oleh HTML aslimu) */
+        /* 1. Base Variables & Reset */
         :root {
-            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             --color-background-primary: #ffffff;
-            --color-background-secondary: #f8fafc; /* Slate 50 */
-            --color-border-secondary: #cbd5e1;     /* Slate 300 */
-            --color-border-tertiary: #e2e8f0;      /* Slate 200 */
-            --color-text-primary: #0f172a;         /* Slate 900 */
-            --color-text-secondary: #64748b;       /* Slate 500 */
-            --border-radius-md: 12px;
-            --border-radius-lg: 20px;
-            
-            /* Warna Latar Belakang Luar Aplikasi */
-            --app-bg: #f1f5f9;
+            --color-background-secondary: #f8fafc;
+            --color-border-secondary: #e2e8f0;
+            --color-border-tertiary: #f1f5f9;
+            --color-text-primary: #0f172a;
+            --color-text-secondary: #475569;
+            --border-radius-md: 16px;
+            --border-radius-lg: 24px;
+            --accent-blue: #2563eb;
+            --accent-blue-hover: #1d4ed8;
         }
 
-        /* 2. Reset Body & App Container */
         body {
-            background-color: var(--app-bg);
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 20px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+            font-family: var(--font-sans);
+            /* Background cerah dengan mesh gradient modern tipis */
+            background-color: #fafafa;
+            background-image: 
+                radial-gradient(at 10% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+                radial-gradient(at 90% 0%, rgba(14, 165, 233, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(244, 63, 94, 0.03) 0px, transparent 50%);
+            background-attachment: fixed;
             margin: 0;
-            padding: 2rem 1rem;
+            padding: 4rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 3. Menimpa Class `.w` Aslimu agar menjadi Card Aplikasi Melayang */
-        .w {
-            background: var(--color-background-primary);
-            max-width: 680px !important;
-            width: 100%;
-            padding: 24px !important;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.6);
-            position: relative;
+        /* 2. MENYULAP TEKS KIRI JADI HERO TITLE LANDING PAGE */
+        h2.sr-only {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            max-width: 850px;
+            margin: 0 auto 3rem auto !important;
+            text-align: center;
+            font-family: var(--font-sans);
+            font-size: 2.75rem !important;
+            font-weight: 800 !important;
+            line-height: 1.3 !important;
+            /* Teks Gradient Mewah */
+            background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            text-wrap: balance;
         }
 
-        /* 4. Tab Navigation Super Mulus */
+        /* 3. Main Dashboard Container */
+        .w {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            max-width: 800px !important;
+            width: 100%;
+            padding: 32px !important;
+            border-radius: 28px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.02),
+                0 20px 40px -10px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            margin: 0 auto;
+        }
+
+        /* 4. Tab Navigation Ala iOS (Segmented Control) */
         .tabs {
+            background: #f1f5f9;
+            padding: 6px !important;
+            border-radius: 100px;
+            display: flex;
             flex-wrap: nowrap !important;
             overflow-x: auto;
-            padding-bottom: 8px;
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            gap: 4px !important;
+            margin-bottom: 2rem !important;
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
         }
         .tabs::-webkit-scrollbar { display: none; }
         
         .tab {
+            font-size: 13px !important;
             font-weight: 600 !important;
-            padding: 8px 16px !important;
+            padding: 10px 20px !important;
+            border-radius: 100px !important;
+            border: none !important;
+            background: transparent !important;
+            color: var(--color-text-secondary) !important;
             white-space: nowrap;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            flex: 1;
+            text-align: center;
         }
         .tab:hover:not(.on) {
-            background: var(--color-background-secondary) !important;
             color: var(--color-text-primary) !important;
-            transform: translateY(-1px);
         }
         .tab.on {
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-            transform: translateY(-1px);
+            background: #ffffff !important;
+            color: var(--color-text-primary) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
         }
 
-        /* 5. Animasi Pane (Anti-Lag, hanya pake opacity & transform) */
+        /* 5. Animasi Pane Super Mulus */
         .pane {
-            animation: slideFadeUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            display: none;
             opacity: 0;
-            transform: translateY(8px);
-            will-change: transform, opacity;
+            transform: translateY(10px);
         }
-        @keyframes slideFadeUp {
+        .pane.on {
+            display: block;
+            animation: paneFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes paneFadeIn {
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 6. Hover Effects untuk Card (Bikin UI terasa "hidup") */
+        /* 6. Mempercantik Komponen Card & Tabel */
+        .sec {
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            color: var(--accent-blue) !important;
+            margin-bottom: 16px !important;
+            letter-spacing: 0.05em !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
         .card, .ind-card, .col-card {
+            background: #ffffff !important;
+            border: 1px solid var(--color-border-secondary) !important;
+            border-radius: var(--border-radius-md) !important;
             transition: transform 0.2s ease, box-shadow 0.2s ease !important;
         }
         .card:hover, .ind-card:hover, .col-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
-            border-color: var(--color-border-secondary) !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1 !important;
         }
 
-        /* 7. Mempercantik Callout Box & Tabel */
-        .info, .warn, .danger, .good {
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            border-radius: 8px !important;
-        }
-        .tbl {
-            white-space: nowrap;
-        }
         .tbl th {
-            background: var(--color-background-secondary);
+            background: #f8fafc !important;
+            font-weight: 700 !important;
+            color: var(--color-text-primary) !important;
+            padding: 12px 16px !important;
         }
-        .tbl tr:hover td {
-            background: #f8fafc;
+        .tbl td {
+            padding: 12px 16px !important;
+            border-bottom: 1px solid var(--color-border-tertiary) !important;
+        }
+        
+        /* 7. Nomor Step Bulat Keren */
+        .snum {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #60a5fa 100%) !important;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            color: white !important;
+            border-radius: 50% !important;
+            font-weight: 700 !important;
+            width: 28px !important;
+            height: 28px !important;
         }
 
-        /* 8. Styling Tombol Prompt di paling bawah */
+        /* 8. Alert Box Lebih Estetik */
+        .info, .warn, .danger, .good {
+            border-radius: 12px !important;
+            border-left-width: 4px !important;
+            padding: 14px 16px !important;
+        }
+
+        /* 9. Tombol CTA Bawah */
         button[onclick^="sendPrompt"] {
-            background: linear-gradient(135deg, #185FA5 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 12px;
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
             cursor: pointer;
-            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
             transition: all 0.2s ease;
             font-family: var(--font-sans);
+            margin-top: 24px !important;
+            letter-spacing: 0.02em;
         }
         button[onclick^="sendPrompt"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
-        }
-        button[onclick^="sendPrompt"]:active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(15, 23, 42, 0.2);
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
 
-        /* 9. Responsif Ekstra untuk Layar HP */
-        @media (max-width: 600px) {
-            body { padding: 0; background: var(--color-background-primary); }
-            .w { border-radius: 0; padding: 20px 16px !important; min-height: 100vh; box-shadow: none; border: none; }
+        /* 10. Responsif Mobile Sempurna */
+        @media (max-width: 768px) {
+            body { padding: 0; background: #ffffff; display: block; }
+            h2.sr-only {
+                font-size: 1.75rem !important;
+                margin: 2rem 1rem !important;
+                text-align: left;
+            }
+            .w { 
+                border-radius: 24px 24px 0 0; 
+                padding: 24px 20px !important; 
+                min-height: 100vh; 
+                box-shadow: none; 
+                border: none; 
+                border-top: 1px solid #e2e8f0;
+            }
+            .tabs { margin-inline: -4px; }
             .three-col { grid-template-columns: 1fr !important; }
-            .indicator-grid { grid-template-columns: 1fr 1fr !important; }
-            .row { flex-direction: column; gap: 4px !important; align-items: flex-start !important; padding: 10px 0 !important;}
+            .indicator-grid { grid-template-columns: 1fr !important; }
+            .row { flex-direction: column; gap: 4px !important; padding: 12px 0 !important;}
             .rv { text-align: left !important; }
         }
     </style>
-
-    <style>
-*{box-sizing:border-box;margin:0;padding:0}
-.w{padding:1.5rem 0;font-family:var(--font-sans)}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
-.tab{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans)}
-.tab.on{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
-.pane{display:none}.pane.on{display:block}
-.sec{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px;margin-top:0}
-.div{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.25rem 0}
-.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:8px;margin-bottom:1rem}
-.mcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
-.mlabel{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
-.mval{font-size:18px;font-weight:500;color:var(--color-text-primary)}
-.row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;gap:12px}
-.row:last-child{border-bottom:none}
-.rl{color:var(--color-text-secondary);flex-shrink:0}
-.rv{font-weight:500;color:var(--color-text-primary);text-align:right}
-.info{background:#E6F1FB;border-left:3px solid #378ADD;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#0C447C;line-height:1.55}
-.warn{background:#FAEEDA;border-left:3px solid #EF9F27;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#633806;line-height:1.55}
-.danger{background:#FCEBEB;border-left:3px solid #E24B4A;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#791F1F;line-height:1.55}
-.good{background:#EAF3DE;border-left:3px solid #639922;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#27500A;line-height:1.55}
-.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
-.snum{min-width:26px;height:26px;border-radius:50%;background:var(--color-text-primary);color:var(--color-background-primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:1px}
-.sbody{flex:1}
-.stitle{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
-.sdesc{font-size:12px;color:var(--color-text-secondary);line-height:1.55}
-.chip{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;margin:2px 2px 2px 0}
-.cg{background:#EAF3DE;color:#27500A}
-.ca{background:#FAEEDA;color:#633806}
-.cr{background:#FCEBEB;color:#791F1F}
-.cb{background:#E6F1FB;color:#0C447C}
-.cp{background:#EEEDFE;color:#3C3489}
-.indicator-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
-.ind-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
-.ind-name{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
-.ind-use{font-size:11px;color:var(--color-text-secondary);line-height:1.4}
-.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
-.col-card{border-radius:var(--border-radius-lg);padding:14px;border:0.5px solid var(--color-border-tertiary)}
-.col-head{font-size:13px;font-weight:500;margin-bottom:8px;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary)}
-.col-item{font-size:12px;color:var(--color-text-secondary);padding:3px 0;line-height:1.4}
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-secondary);border-bottom:1px solid var(--color-border-tertiary);padding:5px 8px;font-weight:500}
-.tbl td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:top;line-height:1.4}
-.tbl tr:last-child td{border-bottom:none}
-.g{color:#3B6D11}.r{color:#A32D2D}.a{color:#854F0B}.b{color:#185FA5}
-</style>
 </head>
 <body>
 
@@ -614,24 +648,17 @@
 
 <script>
 function go(id,btn){
-  // Hapus state "on" dari semua pane dan tab
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  
-  // Trik supaya animasi restart mulus: beri sedikit jeda sebelum menambahkan class .on
-  setTimeout(() => {
-    document.getElementById('pane-'+id).classList.add('on');
-  }, 10);
-  
+  document.getElementById('pane-'+id).classList.add('on');
   btn.classList.add('on');
 }
 </script>
+
 <script>
     function sendPrompt(msg) {
-        alert("Pesan Prompt Disalin:\n\n" + msg + "\n\n(Kamu bisa mem-paste pesan ini ke AI)");
-        console.log("Prompt Log: ", msg);
+        alert("Prompt tersalin: \n\n" + msg);
     }
 </script>
-
 </body>
 </html>
